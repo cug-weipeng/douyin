@@ -1,0 +1,33 @@
+﻿@model IEnumerable<VideoModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>抖音视频列表</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+        <tr>
+            <td style="border-bottom-style:none">
+                @*<video src="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300fd10000bti0df0pt6asgbst5eb0&ratio=720p&line=0" controls="controls">
+                        Your browser does not support the video tag.
+                    </video>*@
+                <a href="@item.Url"><img src="@item.Cover" /></a>
+            </td>
+        </tr>
+        <tr>
+            <td style="border-top-style:none"><b>@item.Title</b></td>
+        </tr>
+        }
+    </tbody>
+</table>
