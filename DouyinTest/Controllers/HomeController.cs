@@ -7,37 +7,29 @@ using Microsoft.AspNetCore.Mvc;
 using DouyinTest.Models;
 using System.Web;
 using DouyinTest.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace DouyinTest.Controllers
 {
     public class HomeController : Controller
     {
-        readonly string domain = $"https://open.douyin.com";
 
         public IActionResult Index()
         {
-            //if (Services.VideoService.token != null)
-            //{
-            //    return RedirectToAction("index", "Video");
-            //}
+            return RedirectToAction("index", "Video");
 
-            string clientKey = "awxhj33sclgkxh22";
-            string responseType = "code";
-            string scope = "video.list,video.data";
-            string redirectUri = "http://www.zjtoprs.com/";
-            string state = "state_example";
+            //string clientKey = "awxhj33sclgkxh22";
+            //string responseType = "code";
+            //string scope = "video.list,video.data";
+            //string redirectUri = "http://www.zjtoprs.com/";
+            //string state = "state_example";
 
-            var url =($"{domain}/platform/oauth/connect?client_key={clientKey}&response_type={responseType}&scope={scope}&redirect_uri={redirectUri}&state={state}");
-            return Redirect(url);
+            //var url =($"{domain}/platform/oauth/connect?client_key={clientKey}&response_type={responseType}&scope={scope}&redirect_uri={redirectUri}&state={state}");
+            //return Redirect(url);
         }
 
         public async Task<IActionResult> Code(string code)
         {
-            VideoService service = new VideoService();
-            if (await service.GetToken(code))
-            {
-                return RedirectToAction("index", "Video");
-            }
             return Redirect("http://www.zjtoprs.com/");
         }
 

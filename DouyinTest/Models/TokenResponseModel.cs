@@ -19,7 +19,7 @@ namespace DouyinTest.Models
         public string access_token { get; set; }
         public string description { get; set; }
         public long error_code { get; set; }
-        public string expires_in { get; set; }
+        public int expires_in { get; set; }
         public string open_id { get; set; }
         public string refresh_token { get; set; }
     }

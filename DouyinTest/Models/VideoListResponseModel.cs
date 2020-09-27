@@ -86,32 +86,32 @@ namespace DouyinTest.Models
         /// <summary>
         /// 评论数
         /// </summary>
-        public string comment_count { get; set; }
+        public int comment_count { get; set; }
 
         /// <summary>
         /// 点赞数
         /// </summary>
-        public string digg_count { get; set; }
+        public int digg_count { get; set; }
 
         /// <summary>
         /// 下载数
         /// </summary>
-        public string download_count { get; set; }
+        public int download_count { get; set; }
 
         /// <summary>
         /// 转发数
         /// </summary>
-        public string forward_count { get; set; }
+        public int forward_count { get; set; }
 
         /// <summary>
         /// 播放数
         /// </summary>
-        public string play_count { get; set; }
+        public int play_count { get; set; }
 
         /// <summary>
         /// 分享数
         /// </summary>
-        public string share_count { get; set; }
+        public int share_count { get; set; }
     }
 
     public class ExtraResponseModel

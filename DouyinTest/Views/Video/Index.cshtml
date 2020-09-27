@@ -1,33 +1,77 @@
 ﻿@model IEnumerable<VideoModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "视频列表";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>抖音视频列表</h2>
+<div>
+    @foreach (var item in Model)
+    {
+        <div class="cardBox">
+            <div>
+                <img src="@item.Cover" />
+            </div>
+            <div class="bodyBox">
+                <p class="title">@item.Title</p>
+                <p class="icons">
+                    <span class="glyphicon  glyphicon-thumbs-up"></span> 100 
+                    <span class="glyphicon glyphicon glyphicon-heart-empty"></span> 200 
+                    <span class="glyphicon glyphicon-comment"></span> 200 
+                    <span class="glyphicon glyphicon-share-alt"></span> 200
+                </p>
+                <p class="createdTime">@item.Id</p>
+            </div>
+        </div>
+    }
+</div>
+<style type="text/css">
+    .cardBox {
+        width: 200px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        text-align: center;
+        float: left;
+        margin-right: 10px;
+        padding: 5px;
+        padding-top: 15px;
+    }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    .headerBox {
+        color: #fff;
+        padding: 10px;
+        font-size: 15px;
+        height: 60px;
+    }
 
-        <tr>
-            <td style="border-bottom-style:none">
-                @*<video src="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300fd10000bti0df0pt6asgbst5eb0&ratio=720p&line=0" controls="controls">
-                        Your browser does not support the video tag.
-                    </video>*@
-                <a href="@item.Url"><img src="@item.Cover" /></a>
-            </td>
-        </tr>
-        <tr>
-            <td style="border-top-style:none"><b>@item.Title</b></td>
-        </tr>
+    .bodyBox {
+        padding: 10px;
+    }
+
+        .bodyBox p {
+            margin-left: 5px;
         }
-    </tbody>
-</table>
+
+    h2 {
+        text-align: center
+    }
+
+    .title {
+        font: 700 22px 宋体;
+        text-align: left
+    }
+
+    .createdTime {
+        font: bold 12px 微软雅黑;
+        text-align: left
+    }
+
+    .icons {
+        font: normal 12px 微软雅黑;
+        text-align: left
+    }
+
+    .glyphicon-heart {
+        color: red;
+    }
+</style>

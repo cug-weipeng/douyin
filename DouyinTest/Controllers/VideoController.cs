@@ -5,20 +5,27 @@ using System.Threading.Tasks;
 using DouyinTest.Models;
 using DouyinTest.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace DouyinTest.Controllers
 {
     public class VideoController : Controller
     {
+        IConfiguration config;
+        public VideoController(IConfiguration configuration) => config = configuration;
 
         public async Task<IActionResult> Index()
         {
+            DouyinService tokenSvc = new DouyinService(config);
+            //var token = tokenSvc.GetToken();
+            //VideoService service = new VideoService();
+            //if (! await service.GetClientToken())
+            //{ 
+            //    return View();
+            //};
+            //var result = await service.GetVideoList();
 
-            VideoService service = new VideoService();
-
-            var result = await service.GetVideoList();
-
-            return View(result);
+            //return View(result);
             return View(new List<VideoModel>() {
                 new VideoModel(){
                     Id = "1",

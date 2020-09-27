@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DouyinTest.Job;
+using DouyinTest.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,12 +33,17 @@ namespace DouyinTest
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddTransient<DouyinJob>();      // 这里使用瞬时依赖注入
+            services.AddSingleton<QuartzStartup>();
+
+            services.AddTransient<DouyinService>();
+            services.AddTransient<VideoService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -47,6 +54,10 @@ namespace DouyinTest
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
+            var quartz = app.ApplicationServices.GetRequiredService<QuartzStartup>();
+            lifetime.ApplicationStarted.Register(quartz.Start);
+            lifetime.ApplicationStopped.Register(quartz.Stop);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
