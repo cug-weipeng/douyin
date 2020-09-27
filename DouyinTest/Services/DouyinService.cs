@@ -74,26 +74,10 @@ namespace DouyinTest.Services
 
         public async Task DownloadVideoList()
         {
-
-        }
-
-
-        private string GetToken()
-        {
-            TokenDao tokenDao = new TokenDao(connectionString);
-
-            var token = tokenDao.GetAvaliableToken();
-
-            return token.AccessToken;
-        }
-
-
-        public async Task<List<VideoModel>> GetVideoList()
-        {
             TokenDao tokenDao = new TokenDao(connectionString);
             var token = tokenDao.GetAvaliableToken();
             if (token == null)
-                return new List<VideoModel>();
+                return;
 
             using (var client = HttpClientFactory.Create())
             {
@@ -103,12 +87,13 @@ namespace DouyinTest.Services
 
                 var videoListResponse = JsonConvert.DeserializeObject<VideoListResponseModel>(content);
                 if (videoListResponse?.data.error_code != 0)
-                    return new List<VideoModel>();
-                var videos = new List<VideoModel>();
+                    return;
+
+                List<VideoEntity> entities = new List<VideoEntity>();
                 var dao = new VideoDao(connectionString);
                 videoListResponse?.data?.list?.ForEach(t =>
                 {
-                    dao.CreateVideo(new VideoEntity()
+                    entities.Add(new VideoEntity()
                     {
                         ItemId = t.item_id,
                         VideoStatus = t.video_status,
@@ -125,7 +110,19 @@ namespace DouyinTest.Services
                         ReceiveTime = DateTime.Now
                     });
                 });
-                return videos;
+
+                if (entities.Count == 0)
+                    return;
+
+                var existIds = dao.GetVideosByItemIds(entities.Select(t => t.ItemId).ToArray())
+                    .Select(t => t.ItemId)
+                    .ToArray();
+
+                var newEntities = entities
+                   .Where(t => !existIds.Contains(t.ItemId))
+                   .ToList();
+
+                dao.CreateVideo(newEntities);
             }
         }
 

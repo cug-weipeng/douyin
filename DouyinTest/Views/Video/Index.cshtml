@@ -16,12 +16,12 @@
             <div class="bodyBox">
                 <p class="title">@item.Title</p>
                 <p class="icons">
-                    <span class="glyphicon  glyphicon-thumbs-up"></span> 100 
-                    <span class="glyphicon glyphicon glyphicon-heart-empty"></span> 200 
-                    <span class="glyphicon glyphicon-comment"></span> 200 
-                    <span class="glyphicon glyphicon-share-alt"></span> 200
+                    <span class="glyphicon  glyphicon-thumbs-up"></span>  @item.DiggCount
+                    <span class="glyphicon glyphicon glyphicon-heart-empty"></span> @item.ForwardCount
+                    <span class="glyphicon glyphicon-comment"></span> @item.CommentCount
+                    <span class="glyphicon glyphicon-share-alt"></span>  @item.ShareCount
                 </p>
-                <p class="createdTime">@item.Id</p>
+                <p class="createdTime">发布于 @item.CreateTimeString</p>
             </div>
         </div>
     }

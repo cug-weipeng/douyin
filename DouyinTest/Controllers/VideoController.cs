@@ -11,35 +11,13 @@ namespace DouyinTest.Controllers
 {
     public class VideoController : Controller
     {
-        IConfiguration config;
-        public VideoController(IConfiguration configuration) => config = configuration;
+        readonly VideoService videoService;
+        public VideoController(VideoService svc) => videoService = svc;
 
         public async Task<IActionResult> Index()
         {
-            DouyinService tokenSvc = new DouyinService(config);
-            //var token = tokenSvc.GetToken();
-            //VideoService service = new VideoService();
-            //if (! await service.GetClientToken())
-            //{ 
-            //    return View();
-            //};
-            //var result = await service.GetVideoList();
-
-            //return View(result);
-            return View(new List<VideoModel>() {
-                new VideoModel(){
-                    Id = "1",
-                    Title = "视频1",
-                    Cover = "",
-                    Url = "   https://vfx.mtime.cn/Video/2019/01/15/mp4/190115161611510728_480.mp4"
-                },
-                 new VideoModel(){
-                    Id = "2",
-                    Title = "视频2",
-                    Cover = "",
-                    Url = "https://media.w3.org/2010/05/sintel/trailer.mp4"
-                }
-            });
+            var videos = videoService.GetVideoList(0,10);
+            return View(videos);
         }
     }
 }
