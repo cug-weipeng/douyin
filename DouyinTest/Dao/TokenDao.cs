@@ -1,14 +1,7 @@
 ﻿using Dapper;
 using DouyinTest.Entities;
-using DouyinTest.Services;
 using MySql.Data.MySqlClient;
-using Remotion.Linq.Clauses;
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace DouyinTest.Dao
 {
@@ -16,6 +9,7 @@ namespace DouyinTest.Dao
     {
         const string SQL_SELECT_TOKEN = "SELECT * FROM tokens WHERE ExpiresIn>@ExpiresIn ORDER BY CreatedTime desc";
         const string SQL_INSERT_TOKEN = "INSERT INTO tokens(AccessToken,RefreshToken,OpenId,RefreshTimes,ExpiresIn,CreatedTime,UpdatedTime) VALUES(@AccessToken,@RefreshToken,@OpenId,@RefreshTimes,@ExpiresIn,@CreatedTime,@UpdatedTime)";
+        const string SQL_REFRESH_TOKEN = "UPDATE tokens SET(RefreshToken=@RefreshToken,ExpiresIn = @ExpiresIn) WHERE TokenId=@TokenId";
 
         readonly MySqlConnection connection;
         public TokenDao(string conStr)
@@ -32,7 +26,17 @@ namespace DouyinTest.Dao
 
         public bool CreateToken(TokenEntity token)
         {
-            return connection.Execute(SQL_INSERT_TOKEN, token)==1;
+            return connection.Execute(SQL_INSERT_TOKEN, token) == 1;
+        }
+
+        public bool RefreshToken(int tokenid, string newRefreshToken, DateTime expireIn)
+        {
+            return connection.Execute(SQL_INSERT_TOKEN, new
+            {
+                TokenId = tokenid,
+                RefreshToken = newRefreshToken,
+                ExpireIn = expireIn
+            }) == 1;
         }
     }
 }

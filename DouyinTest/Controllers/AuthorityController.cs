@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DouyinTest.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Utilities.IO;
 
 namespace DouyinTest.Controllers
@@ -12,23 +13,35 @@ namespace DouyinTest.Controllers
     public class AuthorityController : Controller
     {
         IConfiguration config;
-        public AuthorityController(IConfiguration configuration) => config = configuration;
+        readonly ILogger logger;
+        DouyinService tokenService;
+        public AuthorityController(IConfiguration configuration, ILogger<VideoController> log, DouyinService service)
+        {
+            config = configuration;
+            logger = log;
+            tokenService = service;
+        }
         public IActionResult Index()
         {
-            DouyinService tokenService = new DouyinService(config);
             string url = tokenService.GetAuthUrl();
             return Redirect(url);
         }
 
         public async Task<IActionResult> Code(string code)
         {
-            DouyinService service = new DouyinService(config);
-            if (await service.TokenRequest(code))
+            try
             {
-                return RedirectToAction("index", "Video");
+                if (await tokenService.TokenRequest(code))
+                {
+                    return RedirectToAction("index", "Video");
+                }
+                return Redirect(config["Douyin:redirectUri"]);
             }
-            return Redirect("http://www.zjtoprs.com/");
+            catch (Exception err)
+            {
+                logger.LogError(err, "获取Token异常");
+                return Redirect(config["Douyin:redirectUri"]);
+            }
         }
-
     }
 }

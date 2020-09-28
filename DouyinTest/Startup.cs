@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DouyinTest.Job;
 using DouyinTest.Services;
+using DouyinTest.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +12,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 
 namespace DouyinTest
 {
@@ -43,7 +46,7 @@ namespace DouyinTest
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -58,6 +61,10 @@ namespace DouyinTest
             var quartz = app.ApplicationServices.GetRequiredService<QuartzStartup>();
             lifetime.ApplicationStarted.Register(quartz.Start);
             lifetime.ApplicationStopped.Register(quartz.Stop);
+
+            var appPath = $"{AppDomain.CurrentDomain.BaseDirectory}";
+
+            loggerFactory.AddProvider(new FileLoggerProvider(Configuration));
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

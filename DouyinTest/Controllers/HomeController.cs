@@ -28,7 +28,7 @@ namespace DouyinTest.Controllers
             //return Redirect(url);
         }
 
-        public async Task<IActionResult> Code(string code)
+        public IActionResult Code(string code)
         {
             return Redirect("http://www.zjtoprs.com/");
         }

@@ -28,8 +28,8 @@ namespace DouyinTest.Models
                 if (CreateTime > DateTime.Now.AddDays(-1))
                     return $" {(DateTime.Now - CreateTime).TotalHours} 小时前";
                 if (CreateTime > DateTime.Now.AddYears(-1))
-                    return $" {CreateTime:MM月dd日 HH:mm})";
-                return $" {CreateTime:yyyy年MM月dd日})";
+                    return $" {CreateTime:MM月dd日 HH:mm}";
+                return $" {CreateTime:yyyy年MM月dd日}";
             }
         }
 

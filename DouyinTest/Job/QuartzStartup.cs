@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
@@ -15,13 +16,15 @@ namespace DouyinTest.Job
 
         private readonly ILogger _logger;
         private readonly IJobFactory jobfactory;
-        public QuartzStartup(IServiceProvider IocContainer, ILoggerFactory loggerFactory)
+        private readonly string cron;
+        public QuartzStartup(IServiceProvider IocContainer, ILoggerFactory loggerFactory,IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<QuartzStartup>();
             jobfactory = new DouyinJobFactory(IocContainer);
             var schedulerFactory = new StdSchedulerFactory();
             _scheduler = schedulerFactory.GetScheduler().Result;
             _scheduler.JobFactory = jobfactory;
+            cron = configuration["Douyin:jobCron"];
         }
         // Quartz.Net启动后注册job和trigger
         public void Start()
@@ -36,7 +39,7 @@ namespace DouyinTest.Job
             var UsageCounterSyncJobTrigger = TriggerBuilder.Create()
                 .WithIdentity("DouyinCron")
                 .StartNow()
-                .WithCronSchedule("0 * * * * ?")      // Seconds,Minutes,Hours，Day-of-Month，Month，Day-of-Week，Year（optional field）
+                .WithCronSchedule(cron)      // Seconds,Minutes,Hours，Day-of-Month，Month，Day-of-Week，Year（optional field）
                 .Build();
             _scheduler.ScheduleJob(UsageCounterSyncJob, UsageCounterSyncJobTrigger).Wait();
 
