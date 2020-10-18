@@ -15,6 +15,11 @@ namespace DouyinTest.Models
         public string Title { get; set; }
 
         /// <summary>
+        /// 视频标题
+        /// </summary>
+        public string ItemId { get; set; }
+
+        /// <summary>
         /// 视频创建时间
         /// </summary>
         public DateTime CreateTime { get; set; }

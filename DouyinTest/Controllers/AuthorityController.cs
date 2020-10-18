@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DouyinTest.Models;
 using DouyinTest.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -34,14 +35,15 @@ namespace DouyinTest.Controllers
                 if (await tokenService.TokenRequest(code))
                 {
                     return RedirectToAction("index", "Video");
+                    //return Redirect("http://keqiao.zjtoprs.com/kedou/video");
                 }
-                return Redirect(config["Douyin:redirectUri"]);
             }
             catch (Exception err)
             {
                 logger.LogError(err, "获取Token异常");
-                return Redirect(config["Douyin:redirectUri"]);
+                //return Redirect("http://keqiao.zjtoprs.com/kedou/error");
             }
+            throw new Exception("获取Token异常");
         }
     }
 }

@@ -144,6 +144,72 @@ namespace DouyinTest.Services
             }
         }
 
+        public async Task<string> GetVideoUrl(string itemId)
+        {
+            try
+            {
+                TokenDao tokenDao = new TokenDao(connectionString);
+                var token = tokenDao.GetAvaliableToken();
+                if (token == null)
+                {
+                    logger.LogWarning("没有可用的Token");
+                    return null;
+                }
+
+                using (var client = HttpClientFactory.Create())
+                {
+                    string url = $"{domain}/video/data?open_id={token.OpenId}&access_token={token.AccessToken}";
+                    //var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Post, url));
+                    var str = JsonConvert.SerializeObject(new
+                    {
+                        item_ids = new[] { itemId }
+                    });
+                    HttpContent requestContent = new StringContent(str);
+                    requestContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                    var response = await client.PostAsync(url, requestContent);
+                    var content = await response.Content.ReadAsStringAsync();
+
+                    var videoListResponse = JsonConvert.DeserializeObject<VideoListResponseModel>(content);
+                    if (videoListResponse?.data.error_code != 0)
+                    {
+                        logger.LogError($"请求Token失败:{videoListResponse?.data?.error_code} {videoListResponse?.data?.description}");
+                        return null;
+                    }
+
+                    List<VideoEntity> entities = new List<VideoEntity>();
+                    var dao = new VideoDao(connectionString);
+                    videoListResponse?.data?.list?.ForEach(t =>
+                    {
+                        entities.Add(new VideoEntity()
+                        {
+                            ItemId = t.item_id,
+                            VideoStatus = t.video_status,
+                            Title = t.title,
+                            CreateTime = StampToDateTime(t.create_time),
+                            Cover = t.cover,
+                            ShareUrl = t.share_url,
+                            CommentCount = t.statistics.comment_count,
+                            DiggCount = t.statistics.digg_count,
+                            DownloadCount = t.statistics.download_count,
+                            ForwardCount = t.statistics.forward_count,
+                            PlayCount = t.statistics.play_count,
+                            ShareCount = t.statistics.share_count,
+                            ReceiveTime = DateTime.Now
+                        });
+                    });
+
+                    if (entities.Count == 0)
+                        return null;
+
+                    return entities.FirstOrDefault()?.ShareUrl;
+                }
+            }
+            catch (Exception err)
+            {
+                logger.LogError("获取视频列表失败", err);
+                return null;
+            }
+        }
         public async Task RefreshToken()
         {
             try
@@ -154,7 +220,7 @@ namespace DouyinTest.Services
                     return;
                 if (DateTime.Now > token.ExpiresIn)
                     return;//已经过期的token无效
-                if (DateTime.Now.AddDays(-1) < token.ExpiresIn)
+                if (DateTime.Now.AddDays(1) > token.ExpiresIn)
                 {// 一天内到期
                     if (token.RefreshTimes >= 5)
                         return;//最多刷新5次

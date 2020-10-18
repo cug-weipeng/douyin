@@ -5,24 +5,24 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>抖音视频列表</h2>
 <div class="list">
     @foreach (var item in Model)
     {
     <div class="cardBox">
         <div>
-            <a href="@item.ShareUrl"><img src="@item.Cover" width="300" height="400" /></a>
+            <a href="@Url.Action("Play",new {itemId=item.ItemId })"><img src="@item.Cover" width="300" height="400" /></a>
         </div>
         <div class="bodyBox">
             <p class="title">
                 @if (string.IsNullOrWhiteSpace(item.Title))
-                    {
-                <br />
-                    }
-                    else
-                    {
-                <a href="@item.ShareUrl">@item.Title</a>
-                    }
+                {
+                    <br />
+                }
+                else
+                {
+                    //<a href="@RedirectToAction("Play",new {itemId=item.ItemId })">@item.Title</a>
+                    <a href="@Url.Action("Play",new {itemId=item.ItemId })">@item.Title</a>
+                }
             </p>
             <p class="icons">
                 <span class="glyphicon  glyphicon-thumbs-up"></span>  @item.DiggCount
